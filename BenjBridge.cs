@@ -52,17 +52,5 @@ public static class BenjBridge {
         return Path.GetFileName(Path.GetDirectoryName(Application.dataPath));
     }
 
-    static int UnityInstance() {
-        string projectName = Path.GetFileName(Path.GetDirectoryName(Application.dataPath));
-        switch (projectName) {
-            case "IdleGame":
-                return 0;
-            case "IdleGameSymbolicLink":
-                return 1;
-            case "IdleGameSymbolicLink-Extra":
-                return 2;
-            default: return -1;
-        }
-    }
 
 }
