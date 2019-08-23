@@ -6,46 +6,25 @@ using System.Text.RegularExpressions;
 [InitializeOnLoad]
 public static class BenjBridge {
 
-    const string configPath = "/home/benj/.config/benj-unity-bridge";
+    const string configPath = "/home/benj/repos/bunel/.config";
+    const string handleDir = "/tmp/bunel-handles";
+
     static string handlePath;
-    static int unityInstance;
 
     static BenjBridge() {
-
-        var handleDir = HandleDir();
-        if (handleDir == null) return;
-
-        unityInstance = UnityInstance();
         handlePath = Path.Combine(handleDir, ProjectName());
-
-        Debug.Log($"handle path is {handlePath}");
-
-        // EditorApplication.update += OnUpdate;
+        EditorApplication.update += OnUpdate;
+        Debug.Log($"determined handle path is {handlePath}");
     }
 
     static void OnUpdate() {
-        if(EditorApplication.isCompiling) return;
-        if(EditorApplication.isPlaying) return;
-        if(UnityEditorInternal.InternalEditorUtility.isApplicationActive) return;
-
-    }
-
-    static string HandleDir() {
-        if (!File.Exists(configPath)) {
-            Debug.LogWarning($"could not initialize unity-bridge, because there was no config file at {configPath}");
-            return null;
+        if(File.Exists(handlePath)) {
+            File.Delete(handlePath);
+            if(EditorApplication.isCompiling) return;
+            if(EditorApplication.isPlaying) return;
+            if(UnityEditorInternal.InternalEditorUtility.isApplicationActive) return;
+            AssetDatabase.Refresh();
         }
-
-        var config = File.ReadAllText(configPath);
-        var regex = new Regex(@"^HANDLE_FILE_PATH=(.+)$");
-        var match = regex.Match(config);
-
-        if (!match.Success) {
-            Debug.LogWarning($"Could not read handle file path from file at {configPath}");
-            return null;
-        }
-
-        return match.Groups[1].Value;
     }
 
     static string ProjectName() {
