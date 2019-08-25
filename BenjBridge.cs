@@ -14,15 +14,16 @@ public static class BenjBridge {
     static BenjBridge() {
         handlePath = Path.Combine(handleDir, ProjectName());
         EditorApplication.update += OnUpdate;
-        Debug.Log($"determined handle path is {handlePath}");
     }
 
     static void OnUpdate() {
         if(File.Exists(handlePath)) {
             File.Delete(handlePath);
             if(EditorApplication.isCompiling) return;
-            if(EditorApplication.isPlaying) return;
             if(UnityEditorInternal.InternalEditorUtility.isApplicationActive) return;
+            if(EditorApplication.isPlaying) {
+                EditorApplication.ExitPlaymode();
+            }
             AssetDatabase.Refresh();
         }
     }
