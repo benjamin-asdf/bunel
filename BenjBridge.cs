@@ -4,13 +4,12 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SceneManagement;
 
 [InitializeOnLoad]
 public static class BenjBridge {
 
-    const string configPath = "/home/benj/repos/bunel/.config";
     const string handleDir = "/tmp/bunel-handles";
-
     static string handlePath;
 
     static BenjBridge() {
@@ -19,6 +18,8 @@ public static class BenjBridge {
     }
 
     static void OnUpdate() {
+        if(EditorApplication.isCompiling) return;
+        if(UnityEditorInternal.InternalEditorUtility.isApplicationActive) return;
         if(File.Exists(handlePath)) {
 
             string[] handle = File.ReadAllLines(handlePath);
@@ -30,7 +31,6 @@ public static class BenjBridge {
             if (MethodDelegates.TryGetValue(handle[0], out UnityMethodInvoke value)) {
                 value(handle.Skip(1).ToArray());
             }
-
             File.Delete(handlePath);
         }
     }
@@ -43,8 +43,9 @@ public static class BenjBridge {
 
     static Dictionary<string,UnityMethodInvoke> methodDelagates;
     static Dictionary<string,UnityMethodInvoke> MethodDelegates => methodDelagates ?? (methodDelagates =   new Dictionary<string,UnityMethodInvoke> {
-            { "refresh", Refresh }
-
+            { "refresh", Refresh },
+            { "beep", args => EditorApplication.Beep() },
+            { "open-scene", OpenScene}
         });
 
     /// <summary>
@@ -52,9 +53,6 @@ public static class BenjBridge {
     ///   If any args are given, also start playmode
     /// </summary>
     static void Refresh(params string[] args) {
-        bool startPlaymode = false;
-        if(EditorApplication.isCompiling) return;
-        if(UnityEditorInternal.InternalEditorUtility.isApplicationActive) return;
         if(EditorApplication.isPlaying) {
             EditorApplication.ExitPlaymode();
         }
@@ -62,7 +60,19 @@ public static class BenjBridge {
         if (args.Length > 0) {
             EditorApplication.EnterPlaymode();
         }
+    }
 
+    /// <summary>
+    ///   Open a scene in this unity.
+    ///   There must be a single arg with the path relative to the project root.
+    ///   Example: "Assets/Scenes/Features/Menus/Roulette.unity"
+    /// </summary>
+    static void OpenScene(params string[] args) {
+        if (args.Length != 1) {
+            Debug.LogWarning($"invalid open scene request: {args.Join(",")}");
+            return;
+        }
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene(args[0]);
     }
 
 }
