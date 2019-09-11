@@ -1,10 +1,8 @@
 using UnityEditor;
 using UnityEngine;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SceneManagement;
 
 [InitializeOnLoad]
 public static class BenjBridge {
