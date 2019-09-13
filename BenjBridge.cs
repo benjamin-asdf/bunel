@@ -51,7 +51,7 @@ public static class BenjBridge {
     ///   If any args are given, also start playmode
     /// </summary>
     static void Refresh(params string[] args) {
-        if(EditorApplication.isPlaying) {
+        if (EditorApplication.isPlaying) {
             EditorApplication.ExitPlaymode();
         }
         AssetDatabase.Refresh();
