@@ -26,10 +26,10 @@ public static class BenjBridge {
                 File.Delete(handlePath);
                 return;
             }
+            File.Delete(handlePath);
             if (MethodDelegates.TryGetValue(handle[0], out UnityMethodInvoke value)) {
                 value(handle.Skip(1).ToArray());
             }
-            File.Delete(handlePath);
         }
     }
 
