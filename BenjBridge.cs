@@ -66,7 +66,7 @@ public static class BenjBridge {
     ///   Example: "Assets/Scenes/Features/Menus/Roulette.unity"
     /// </summary>
     static void OpenScene(params string[] args) {
-        if (args.Length != 1) {
+        if (args.Length != 1 || string.IsNullOrEmpty(args[0])) {
             Debug.LogWarning($"invalid open scene request: {args.Join(",")}");
             return;
         }
