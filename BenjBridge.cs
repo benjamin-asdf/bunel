@@ -17,7 +17,6 @@ public static class BenjBridge {
 
     static void OnUpdate() {
         if(EditorApplication.isCompiling) return;
-        if(UnityEditorInternal.InternalEditorUtility.isApplicationActive) return;
         if(File.Exists(handlePath)) {
 
             string[] handle = File.ReadAllLines(handlePath);
